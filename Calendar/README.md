@@ -1,7 +1,5 @@
 ## ✔ **Base Calendar Setting**   
-     
-![basecalendar](/images/base_calendar.gif)    
-
+<img src="https://raw.githubusercontent.com/hyooosong/AndroidPractice/master/Calendar/images/base_calendar.gif" />
 
 ## 🍀 File   
 
