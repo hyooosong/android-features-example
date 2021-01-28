@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableField
+import androidx.lifecycle.Observer
 import androidx.room.Room
 import com.example.room.databinding.ActivityMainBinding
 
@@ -24,9 +25,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun setTodoUseLiveData() {
+        db.toDoDao().getTodoList().observe(this, Observer { todo ->
+            binding.textViewTodoList.text = todo.toString()
+        })
+    }
+
     fun setTodoList(){
         db.toDoDao().insert(Todo(editTextTodo.get().toString()))
-        binding.textViewTodoList.text = db.toDoDao().getTodoList().toString()
+        setTodoUseLiveData()
         editTextTodo.set(" ")
     }
 }
