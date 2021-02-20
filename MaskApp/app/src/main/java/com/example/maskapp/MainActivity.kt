@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.maskapp.databinding.ActivityMainBinding
 import com.example.maskapp.model.MaskStoreModel
@@ -17,41 +19,24 @@ import retrofit2.Call
 class MainActivity : AppCompatActivity() {
     private lateinit var maskAdapter: MaskAdapter
     private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        val mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
+        binding.lifecycleOwner = this
+        binding.mainViewModel = mainViewModel
 
         maskAdapter = MaskAdapter()
-        connectServer()
-
         binding.rcvMaskStore.apply {
             adapter=maskAdapter
             layoutManager = LinearLayoutManager(this@MainActivity)
         }
 
-        binding.btnRefresh.setOnClickListener {
-            connectServer()
-        }
-    }
-
-    private fun connectServer(){
-        val call: Call<MaskStoreModel> =
-            MaskService.getInstance().fetchStoreInfo()
-        call.enqueueListener(
-            onSuccess = {
-                val items : List<StoreModel> = it.body()!!.stores
-                maskAdapter.refreshData(items
-                    .filter { items -> items.remain_stat != null }
-                )
-                supportActionBar!!.title = "마스크 재고 있는 곳 : ${items.size}곳"
-            },
-            onError = {
-                Log.d(TAG_ERROR, it.message())
-            }
-        )
-    }
-
-    companion object {
-        const val TAG_ERROR = "Error"
+        mainViewModel.itemLiveData.observe(this, Observer {
+            maskAdapter.refreshData(it)
+            supportActionBar!!.title = "마스크 재고 있는 곳 : ${it.size}곳"
+        })
     }
 }
