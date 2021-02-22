@@ -10,8 +10,8 @@ interface MaskService {
 
     @GET("sample.json")
     fun fetchStoreInfo(
-//        @Query("lat") lat: Double,
-//        @Query("lng") lng: Double
+        @Query("lat") lat: Double,
+        @Query("lng") lng: Double
     ): Call<MaskStoreModel>
 
     companion object {

@@ -1,9 +1,8 @@
-package com.example.maskapp
+package com.example.maskapp.presentation
 
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.maskapp.databinding.ItemStoreBinding
 import com.example.maskapp.model.StoreModel
