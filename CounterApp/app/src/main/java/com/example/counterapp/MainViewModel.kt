@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
-class MainViewModel(private val handle: SavedStateHandle) : ViewModel() {
+class MainViewModel : ViewModel() {
     private val _count = MutableLiveData<Int>()
     val count: LiveData<Int>
         get() = _count
