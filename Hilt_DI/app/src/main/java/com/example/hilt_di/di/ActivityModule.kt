@@ -1,14 +1,13 @@
 package com.example.hilt_di.di
 
 import com.example.hilt_di.di.qualifier.ActivityHash
-import com.example.hilt_di.di.qualifier.AppHash
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object ActivityModule {
 
     @ActivityHash
