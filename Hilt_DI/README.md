@@ -31,6 +31,8 @@ dependencies {
 class App: Application() {
 }
 ```
+* manifests.xml 에 `android:name=".App"` 추가
+
 
 ### ✨ Hilt 에서 제공하는 표준 컴포넌트 hierarchy
 <br>
