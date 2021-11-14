@@ -1,60 +1,52 @@
 package com.example.maskapp.presentation
 
-import android.util.Log
+import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.maskapp.enqueueListener
-import com.example.maskapp.model.MaskStoreModel
+import androidx.lifecycle.viewModelScope
 import com.example.maskapp.model.StoreModel
 import com.example.maskapp.network.MaskService
-import retrofit2.Call
-import java.util.*
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val service: MaskService
+    ) : ViewModel() {
+
     private val _itemLiveData = MutableLiveData<List<StoreModel>>()
     val itemLiveData: LiveData<List<StoreModel>>
         get() = _itemLiveData
 
-    private val _latitude = MutableLiveData<Double>()
-    val latitude: LiveData<Double>
-        get() = _latitude
+    private val _loadingLiveData = MutableLiveData<Boolean>()
+    val loadingLiveData: LiveData<Boolean>
+        get() = _loadingLiveData
 
-    private val _longitude = MutableLiveData<Double>()
-    val longitude: LiveData<Double>
-        get() = _longitude
+    private val _location = MutableLiveData<Location>()
+    val location: LiveData<Location>
+        get() = _location
 
-    fun setLatitude(lat : Double) {
-        _latitude.value = lat
+    private fun setLoading(status: Boolean) {
+        _loadingLiveData.value = status
     }
 
-    fun setLongitude(lng: Double) {
-        _longitude.value = lng
+    init {
+        _location.value = location.value
     }
-
-//    private val _location = MutableLiveData<LocationModel>()
-//    val location: LiveData<LocationModel>
-//        get() = _location
-
-    private val call: Call<MaskStoreModel> =
-        MaskService.getInstance().fetchStoreInfo(_latitude.value!!, _longitude.value!!)
 
     fun fetchStoreInfo() {
-            call.clone().enqueueListener(
-                onSuccess = {
-                    val items: List<StoreModel> = it.body()!!.stores
-                        .filter { items -> items.remain_stat != null }
+        setLoading(true)
 
-                    _itemLiveData.postValue(items)
-                },
-                onError = {
-                    Log.d(TAG_ERROR, it.message())
-                    _itemLiveData.postValue(Collections.emptyList())
-                }
-            )
+        viewModelScope.launch {
+            val storeLocation = MaskService.getInstance()
+                .fetchStoreInfo(_location.value?.latitude!!, _location.value?.longitude!!)
+
+            val items = storeLocation.stores.filter { items -> items.remain_stat != null }
+
+            _itemLiveData.value = items
+            setLoading(false)
         }
-
-    companion object {
-        const val TAG_ERROR = "Error"
     }
 }

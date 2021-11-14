@@ -1,18 +1,17 @@
 package com.example.maskapp.network
 
+import com.example.maskapp.di.module.NetworkModule.provideService
 import com.example.maskapp.model.MaskStoreModel
-import com.example.maskapp.model.StoreModel
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface MaskService {
 
     @GET("sample.json")
-    fun fetchStoreInfo(
+    suspend fun fetchStoreInfo(
         @Query("lat") lat: Double,
         @Query("lng") lng: Double
-    ): Call<MaskStoreModel>
+    ): MaskStoreModel
 
     companion object {
         const val MaskServiceBaseURL=
